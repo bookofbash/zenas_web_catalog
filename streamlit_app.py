@@ -3,7 +3,15 @@ import snowflake.connector
 import pandas
 streamlit.title('Zena\'s Amazing Athleisure Catalog')
 # connect to snowflake
-my_cnx = snowflake.connector.connect(**streamlit.secrets["snowflake"])
+try:
+    my_cnx = snowflake.connector.connect(**streamlit.secrets["snowflake"])
+except snowflake.connector.errors.OperationalError as e:
+    streamlit.error(f"Could not connect to Snowflake: {e}")
+    # More error handling here if necessary
+except Exception as e:
+    streamlit.error(f"An unexpected error occurred: {e}")
+    # More error handling here if necessary
+
 my_cur = my_cnx.cursor()
 # run a snowflake query and put it all in a var called my_catalog
 my_cur.execute("select color_or_style from catalog_for_website")
